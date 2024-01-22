@@ -19,6 +19,7 @@ class UserService:
 
             return user, None
         except IntegrityError:
+            db.session.rollback()
             return None, "Email already exists"
 
     @staticmethod
@@ -60,6 +61,7 @@ class UserService:
 
                 return user
         except NoResultFound:
+            db.session.rollback()
             return "User not found"
 
     @staticmethod
@@ -70,9 +72,9 @@ class UserService:
             if user:
                 db.session.delete(user)
                 db.session.commit()
-                return "Usuário deletado com sucesso"
+                return "User delete succsessfully"
             else:
-                return "Usuário não encontrado"
+                return "User not found"
         except IntegrityError:
             db.session.rollback()
-            return "Erro ao deletar usuário"
+            return "Error deleting user"
