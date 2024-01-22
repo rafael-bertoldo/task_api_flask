@@ -34,14 +34,13 @@ class UserService:
             return output
         except NoResultFound:
             return "User not found"
-        
-    
+
     @staticmethod
     def update_profile(data, id, db):
         bcrypt = Bcrypt()
 
         try:
-            user_by_email = User.query.filter_by(user_email=data['user_email']).one
+            user_by_email = User.query.filter_by(user_email=data["user_email"]).one
         except IntegrityError:
             return "Email already exists"
 
@@ -52,7 +51,9 @@ class UserService:
                 user.user_name = data.get("user_name", user.user_name)
                 user.user_email = data.get("user_email", user.user_email)
 
-                hash_pass = bcrypt.generate_password_hash(data.get("user_password")).decode("utf-8")
+                hash_pass = bcrypt.generate_password_hash(
+                    data.get("user_password")
+                ).decode("utf-8")
                 user.user_password = hash_pass
 
                 db.session.commit()
@@ -60,3 +61,18 @@ class UserService:
                 return user
         except NoResultFound:
             return "User not found"
+
+    @staticmethod
+    def delete_user(id, db):
+        try:
+            user = User.query.get(id)
+
+            if user:
+                db.session.delete(user)
+                db.session.commit()
+                return "Usuário deletado com sucesso"
+            else:
+                return "Usuário não encontrado"
+        except IntegrityError:
+            db.session.rollback()
+            return "Erro ao deletar usuário"

@@ -41,10 +41,7 @@ class UserController:
         current_user = get_jwt_identity()
         user_service = UserService()
 
-        user, error_message = user_service.update_profile(data, current_user, db)
-
-        if error_message:
-            return {"message": error_message}
+        user = user_service.update_profile(data, current_user, db)
         
         user_dict = {
             "id": user.user_id,
@@ -55,3 +52,14 @@ class UserController:
 
         return jsonify(user_dict), 200
     
+
+    @staticmethod
+    @jwt_required()
+    def delete_profile():
+        db = current_app.db
+        current_user = get_jwt_identity()
+        user_service = UserService()
+
+        deleted = user_service.delete_user(current_user, db)
+
+        return jsonify({"message": deleted}), 200
