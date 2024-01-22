@@ -9,7 +9,8 @@ class TaskService:
                 **data,
                 "user_id": id
             }
-            task = Task(new_task)
+            print(new_task)
+            task = Task(**new_task)
 
             db.session.add(task)
             db.session.commit()
